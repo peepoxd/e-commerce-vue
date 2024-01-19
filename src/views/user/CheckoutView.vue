@@ -64,15 +64,30 @@ const payment = () => {
                     </div>
                     <div class="flex-1">
                         <div class="flex flex-col justify-between h-full">
-                            <div>
+                            <div class="">
                                 <div><b>{{ item.name }}</b></div>
-                                <div>จำนวน:{{ item.quantity }}</div>
+                                <div>จำนวน: {{ item.quantity }}</div>
                             </div>
                             <RouterLink :to="{ name: 'cart' }">
                                 <button class="btn btn-gray my-3 w-full p-auto m-auto">Edit</button>
                             </RouterLink>
                         </div>
                     </div>
+                </div>
+                <div class="divider"></div>
+                <div class="mx-2 text-2xl"><b>Order summarry</b></div>
+                <div class="m-3 flex justify-between">
+                <div>รวมราคาสินค้า</div>
+                    <div>{{ cartStore.summaryPrice }}</div>
+                </div>
+                <div class="m-3 flex justify-between">
+                <div>ค่าส่ง</div>
+                    <div>0</div>
+                </div>
+                <div class="divider"></div>
+                <div class="m-3 flex justify-between">
+                <div>ราคารวมทั้งหมด</div>
+                    <div> {{ cartStore.summaryPrice }}</div>
                 </div>
             </section>
         </div>

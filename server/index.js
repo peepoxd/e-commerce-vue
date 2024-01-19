@@ -1,47 +1,126 @@
+
 const express = require('express')
 const bodyparser = require('body-parser')
 
 const mysql = require('mysql2/promise')
-const Pool = require('pg').Pool
-
+const client = require('./connection.js')
 
 const cors = require('cors')
-const dotenv = require('dotenv')
-
 
 const app = express()
 const port = 8000
 
-const conn = null
-
 app.use(bodyparser.json())
 app.use(cors())
-dotenv.config()
 
-const initMySQL = () => {
-    conn =  new Pool({
-        host: process.env.HOST,
-        user: process.env.USER,
-        password: process.env.PASSWORD,
-        database: process.env.DATABASE,
-        port: process.env.PORT
-    })
-}
-
-app.listen(port, async (req, res) => {
-    try{
-        await initMySQL()
+app.listen(port, (req, res) => {
+    try {
+        client.connect()
         console.log('http server run on : ' + port)
-    }catch(error){
+    } catch (error) {
         console.log('error', error)
     }
 })
 
-app.get('/', async (req, res) => {
-    const results = await conn.query('SELECT * FROM users')
-    res.send(results[0])
+app.get('/users', async (req, res) => {
+    try {
+        const results = await client.query(`Select * from users`)
+        if (results.rows == null) {
+            throw { statusCode: 500, message: 'Somthing wrong' }
+        }
+        res.send(results.rows)
+    } catch (err) {
+        console.log('error message :', err.message)
+        res.status(statusCode).json({
+            errormessage: err.message
+        })
+    }
 })
 
+app.get('/user/:id', async (req, res) => {
+    try {
+        let insertQuery = `SELECT * FROM users WHERE id = ${req.params.id}`
+        const results = await client.query(insertQuery)
+        if (results.rows.length == 0) {
+            throw { statusCode: 404, message: 'Not found' }
+        }
+        res.send(results.rows)
+
+    } catch (error) {
+        console.log('error message :', error.message)
+        let statusCode = error.statusCode || 500
+        res.status(statusCode).json({
+                message: 'somthing wrong',
+                eerorMassage: error.message
+            }
+        )
+    }
+})
+
+app.post('/users', async (req, res) => {
+    try {
+        const user = req.body
+        let insertQuery = `INSERT INTO users(id, first_name, last_name, email, birthdate, added) 
+                            values(${user.id}, '${user.first_name}', '${user.last_name}', '${user.email}', '${user.birthdate}', '${user.added}')`
+        const results = await client.query(insertQuery)
+        res.json({
+            message: ' Inserted '
+        })
+    } catch (error) {
+        console.log('error message', error.message)
+        let statusCode = error.statusCode || 500
+        res.status(statusCode).json({
+            message: 'somthing wrong',
+            eerorMassage: error.message
+        })
+    }
+})
+
+app.put('/user/:id', async (req, res) => {
+    try {
+        let id = req.params.id
+        let user = req.body
+        let updateQuery = `UPDATE users 
+                            SET id =        '${id}',
+                            first_name =    '${user.first_name}',
+                            last_name =     '${user.last_name}',
+                            email =         '${user.email}',
+                            birthdate =     '${user.birthdate}',
+                            added =         '${user.added}'`
+
+        const results = await client.query(updateQuery)
+        
+        res.json({
+            message: ' Updated',
+        })
+    } catch (error) {
+        console.log('error message', error.message, error.statusCode)
+        let statusCode = error.statusCode || 500
+        res.status(statusCode).json({
+            message: 'somthing wrong',
+            eerorMassage: error.message
+        })
+    }
+})
+
+app.delete('/user/:id', async (req, res) => {
+    try {
+        let insertQuery = `DELETE FROM users WHERE id = ${req.params.id}`
+        const results = await client.query(insertQuery)
+        res.json({
+            message: ' Deleted'
+        })
+        
+    } catch (error) {
+        console.log('error message', error.message, error.statusCode)
+        let statusCode = error.statusCode || 500
+        res.status(statusCode).json({
+            message: 'somthing wrong',
+            eerorMassage: error.message
+        })
+    }
+})
+/*
 app.post('/user', async (req, res) => {
     try {
         let user = req.body
@@ -123,5 +202,5 @@ app.delete('/user/:id', async (req, res) => {
         })
     }
 })
-
+*/
 
