@@ -22,7 +22,7 @@ const updateProfile = () => {
     }
     localStorage.setItem('profile-data', JSON.stringify(profileData))
     if (!eventStore.alert) { 
-        eventStore.popupMessage('success','update')
+        eventStore.popupMessage('success','update successful!')
     }
 
 
@@ -56,7 +56,7 @@ onMounted(() => {
 <template>
     
     <UserLayout>
-        <div class="max-w-2xl border border-base-200 shadow-xl p-8 m-auto my-6">
+        <div class="max-w-2xl border border-base-200 shadow-xl p-8 m-auto my-6 ">
             <div class="font-bold">Profile page</div>
             <div class="flex flex-col items-center m-4">
                 <div class="flex flex-col m-2 items-center">
