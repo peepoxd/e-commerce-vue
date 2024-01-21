@@ -5,7 +5,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import UserLayout from '@/layouts/UserLayout.vue'
 import { useCartStore } from '@/stores/user/cart'
 
-
+const router = useRouter()
 const cartStore = useCartStore()
 
 const checkoutForm = [
@@ -35,9 +35,9 @@ const userFormData = reactive({
 })
 
 const payment = () => {
-    console.log(userFormData)
+    cartStore.placeOrder(userFormData)
+    router.push({ name: 'success' })
 }
-
 
 </script>
 
@@ -50,7 +50,9 @@ const payment = () => {
                     <label class="label">
                         <span class="lebel-text"> {{ form.name }} </span>
                     </label>
-                    <textarea v-if="form.field === 'address'"
+                    <textarea 
+                        v-if="form.field === 'address'"
+                        v-model="userFormData[form.field]"
                         class="textarea textarea-bordered h-24">{{ form.name }}</textarea>
                     <input v-else v-model="userFormData[form.field]" type="text" placeholder="Type here"
                         class="input input-bordered input-xs w-full " />
@@ -77,16 +79,16 @@ const payment = () => {
                 <div class="divider"></div>
                 <div class="mx-2 text-2xl"><b>Order summarry</b></div>
                 <div class="m-3 flex justify-between">
-                <div>รวมราคาสินค้า</div>
+                    <div>รวมราคาสินค้า</div>
                     <div>{{ cartStore.summaryPrice }}</div>
                 </div>
                 <div class="m-3 flex justify-between">
-                <div>ค่าส่ง</div>
+                    <div>ค่าส่ง</div>
                     <div>0</div>
                 </div>
                 <div class="divider"></div>
                 <div class="m-3 flex justify-between">
-                <div>ราคารวมทั้งหมด</div>
+                    <div>ราคารวมทั้งหมด</div>
                     <div> {{ cartStore.summaryPrice }}</div>
                 </div>
             </section>

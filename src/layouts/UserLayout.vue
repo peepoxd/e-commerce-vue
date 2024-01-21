@@ -22,6 +22,9 @@ const login = () => {
 const logout = () => {
     isLoggedIn.value = false
     localStorage.removeItem('isLoggedIn')
+    localStorage.removeItem('order-data')
+    localStorage.removeItem('cart-data')
+    window.location.reload()
 }
 const handleSearch = (event) => {
     if (event.key === 'Enter') {
