@@ -6,6 +6,7 @@ const mysql = require('mysql2/promise')
 const client = require('./connection.js')
 
 const cors = require('cors')
+const authorData = require('./postJSON.js')
 
 const app = express()
 const port = 8000
@@ -13,8 +14,9 @@ const port = 8000
 app.use(bodyparser.json())
 app.use(cors())
 
-app.listen(port, (req, res) => {
+app.listen(port, (req , res) => {
     try {
+        console.log()
         client.connect()
         console.log('http server run on : ' + port)
     } catch (error) {
@@ -26,7 +28,7 @@ app.get('/users', async (req, res) => {
     try {
         const results = await client.query(`Select * from users`)
         if (results.rows == null) {
-            throw { statusCode: 500, message: 'Somthing wrong' }
+            throw { statusCode: 500, message: 'Somthing wrong'}
         }
         res.send(results.rows)
     } catch (err) {
@@ -37,6 +39,7 @@ app.get('/users', async (req, res) => {
     }
 })
 
+
 app.get('/user/:id', async (req, res) => {
     try {
         let insertQuery = `SELECT * FROM users WHERE id = ${req.params.id}`
@@ -45,7 +48,6 @@ app.get('/user/:id', async (req, res) => {
             throw { statusCode: 404, message: 'Not found' }
         }
         res.send(results.rows)
-
     } catch (error) {
         console.log('error message :', error.message)
         let statusCode = error.statusCode || 500
@@ -120,6 +122,7 @@ app.delete('/user/:id', async (req, res) => {
         })
     }
 })
+
 /*
 app.post('/user', async (req, res) => {
     try {
